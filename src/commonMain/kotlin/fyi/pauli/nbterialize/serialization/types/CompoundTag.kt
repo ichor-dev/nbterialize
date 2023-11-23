@@ -1,14 +1,25 @@
 package fyi.pauli.nbterialize.serialization.types
 
+import fyi.pauli.nbterialize.Nbt
 import fyi.pauli.nbterialize.extensions.AnyTag
 import kotlinx.io.Buffer
 import kotlinx.io.readString
 import kotlinx.io.readUShort
 import kotlinx.io.writeUShort
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.encoding.encodeCollection
 
 public typealias CompoundMap = Map<String, AnyTag>
 public typealias MutableCompoundMap = MutableMap<String, AnyTag>
 
+@Serializable(with = CompoundTagSerializer::class)
 public class CompoundTag private constructor(override var name: String? = null) : Tag<CompoundMap>() {
     internal constructor(buffer: Buffer, name: String? = null) : this(name) {
         read(buffer)
@@ -84,5 +95,24 @@ public class CompoundTag private constructor(override var name: String? = null) 
         result = 31 * result + type.hashCode()
         result = 31 * result + size
         return result
+    }
+}
+
+public object CompoundTagSerializer : KSerializer<CompoundTag> {
+    private object CompoundTagArrayDescription : SerialDescriptor by ListSerializer(Byte.serializer()).descriptor {
+        @ExperimentalSerializationApi
+        override val serialName: String = "CompoundTag"
+    }
+    override val descriptor: SerialDescriptor = CompoundTagArrayDescription
+
+    override fun deserialize(decoder: Decoder): CompoundTag {
+        val byteArray = ListSerializer(Byte.serializer()).deserialize(decoder).toByteArray()
+        return Nbt.decodeToNbt(byteArray) as CompoundTag
+    }
+
+    override fun serialize(encoder: Encoder, value: CompoundTag) {
+        encoder.encodeCollection(descriptor, Nbt.encodeFromNbt(value).toList()) { index, element ->
+            encodeByteElement(descriptor, index, element)
+        }
     }
 }
