@@ -1,6 +1,6 @@
-package fyi.pauli.prolialize.extensions
+package fyi.pauli.nbterialize.extensions
 
-import fyi.pauli.prolialize.serialization.types.*
+import fyi.pauli.nbterialize.serialization.types.*
 
 @DslMarker
 internal annotation class NbtBuilderDsl
@@ -58,28 +58,28 @@ public abstract class NbtBuilder<T : AnyTag, U : Any> internal constructor(prote
 
     @PublishedApi
     internal inline fun <reified T : Any> parseList(value: List<T>): ListTag = when (val clazz = T::class) {
-        Byte::class -> ListTag(TagType.BYTE, value.toListOfByte())
-        Short::class -> ListTag(TagType.SHORT, value.toListOfShort())
-        Int::class -> ListTag(TagType.INT, value.toListOfInt())
-        Long::class -> ListTag(TagType.LONG, value.toListOfLong())
-        Float::class -> ListTag(TagType.FLOAT, value.toListOfFloat())
-        Double::class -> ListTag(TagType.DOUBLE, value.toListOfDouble())
-        ByteArray::class -> ListTag(TagType.BYTE_ARRAY, value.toListOfByteArray())
-        String::class -> ListTag(TagType.STRING, value.toListOfString())
-        IntArray::class -> ListTag(TagType.INT_ARRAY, value.toListOfIntArray())
-        LongArray::class -> ListTag(TagType.LONG_ARRAY, value.toListOfLongArray())
-        ByteTag::class -> ListTag(TagType.BYTE, value.toListOf<ByteTag>())
-        ShortTag::class -> ListTag(TagType.SHORT, value.toListOf<ShortTag>())
-        IntTag::class -> ListTag(TagType.INT, value.toListOf<IntTag>())
-        LongTag::class -> ListTag(TagType.LONG, value.toListOf<LongTag>())
-        FloatTag::class -> ListTag(TagType.FLOAT, value.toListOf<FloatTag>())
-        DoubleTag::class -> ListTag(TagType.DOUBLE, value.toListOf<DoubleTag>())
-        ByteArrayTag::class -> ListTag(TagType.BYTE_ARRAY, value.toListOf<ByteArrayTag>())
-        StringTag::class -> ListTag(TagType.STRING, value.toListOf<StringTag>())
-        ListTag::class -> ListTag(TagType.LIST, value.toListOf<ListTag>())
-        CompoundTag::class -> ListTag(TagType.COMPOUND, value.toListOf<CompoundTag>())
-        IntArrayTag::class -> ListTag(TagType.INT_ARRAY, value.toListOf<IntArrayTag>())
-        LongArrayTag::class -> ListTag(TagType.LONG_ARRAY, value.toListOf<LongArrayTag>())
+        Byte::class -> ListTag(TagType.BYTE, value.toListOfByte(), mustBeSame = false)
+        Short::class -> ListTag(TagType.SHORT, value.toListOfShort(), mustBeSame = false)
+        Int::class -> ListTag(TagType.INT, value.toListOfInt(), mustBeSame = false)
+        Long::class -> ListTag(TagType.LONG, value.toListOfLong(), mustBeSame = false)
+        Float::class -> ListTag(TagType.FLOAT, value.toListOfFloat(), mustBeSame = false)
+        Double::class -> ListTag(TagType.DOUBLE, value.toListOfDouble(), mustBeSame = false)
+        ByteArray::class -> ListTag(TagType.BYTE_ARRAY, value.toListOfByteArray(), mustBeSame = false)
+        String::class -> ListTag(TagType.STRING, value.toListOfString(), mustBeSame = false)
+        IntArray::class -> ListTag(TagType.INT_ARRAY, value.toListOfIntArray(), mustBeSame = false)
+        LongArray::class -> ListTag(TagType.LONG_ARRAY, value.toListOfLongArray(), mustBeSame = false)
+        ByteTag::class -> ListTag(TagType.BYTE, value.toListOf<ByteTag>(), mustBeSame = false)
+        ShortTag::class -> ListTag(TagType.SHORT, value.toListOf<ShortTag>(), mustBeSame = false)
+        IntTag::class -> ListTag(TagType.INT, value.toListOf<IntTag>(), mustBeSame = false)
+        LongTag::class -> ListTag(TagType.LONG, value.toListOf<LongTag>(), mustBeSame = false)
+        FloatTag::class -> ListTag(TagType.FLOAT, value.toListOf<FloatTag>(), mustBeSame = false)
+        DoubleTag::class -> ListTag(TagType.DOUBLE, value.toListOf<DoubleTag>(), mustBeSame = false)
+        ByteArrayTag::class -> ListTag(TagType.BYTE_ARRAY, value.toListOf<ByteArrayTag>(), mustBeSame = false)
+        StringTag::class -> ListTag(TagType.STRING, value.toListOf<StringTag>(), mustBeSame = false)
+        ListTag::class -> ListTag(TagType.LIST, value.toListOf<ListTag>(), mustBeSame = false)
+        CompoundTag::class -> ListTag(TagType.COMPOUND, value.toListOf<CompoundTag>(), mustBeSame = false)
+        IntArrayTag::class -> ListTag(TagType.INT_ARRAY, value.toListOf<IntArrayTag>(), mustBeSame = false)
+        LongArrayTag::class -> ListTag(TagType.LONG_ARRAY, value.toListOf<LongArrayTag>(), mustBeSame = false)
         Any::class -> throw IllegalArgumentException("ListTag elements must be of the same type")
         else -> throw IllegalArgumentException("Unsupported type ${clazz.simpleName} for ListTag")
     }
@@ -90,7 +90,7 @@ public class CompoundTagBuilder @PublishedApi internal constructor(name: String?
 
     override val entries: MutableCompoundMap = mutableMapOf()
 
-    override fun build(): CompoundTag = CompoundTag(entries, name)
+    override fun build(): CompoundTag = CompoundTag(entries, name, false)
 
     public fun put(name: String, tag: AnyTag) {
         if (tag is EndTag) throw IllegalArgumentException("Cannot add an NbtEnd to an NbtCompound")
@@ -117,13 +117,14 @@ public class CompoundTagBuilder @PublishedApi internal constructor(name: String?
     public inline fun <reified T : Any> put(name: String, value: List<T>): Unit = put(name, parseList(value))
 }
 
-public class ListTagBuilder @PublishedApi internal constructor(name: String?) : NbtBuilder<ListTag, MutableListTagList>(name) {
+public class ListTagBuilder @PublishedApi internal constructor(name: String?) :
+    NbtBuilder<ListTag, MutableListTagList>(name) {
 
     override val entries: MutableListTagList = mutableListOf()
 
     private var elementsType = entries.firstOrNull()?.type
 
-    override fun build(): ListTag = ListTag(elementsType ?: TagType.END, entries, name)
+    override fun build(): ListTag = ListTag(elementsType ?: TagType.END, entries, name, false)
 
     public fun add(tag: AnyTag) {
         if (elementsType == null) elementsType = tag.type

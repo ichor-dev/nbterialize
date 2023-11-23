@@ -1,8 +1,8 @@
-package fyi.pauli.prolialize.serialization
+package fyi.pauli.nbterialize.serialization
 
-import fyi.pauli.prolialize.extensions.*
-import fyi.pauli.prolialize.serialization.types.ArrayTag
-import fyi.pauli.prolialize.serialization.types.ListTag
+import fyi.pauli.nbterialize.extensions.*
+import fyi.pauli.nbterialize.serialization.types.ArrayTag
+import fyi.pauli.nbterialize.serialization.types.ListTag
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -44,7 +44,7 @@ internal open class NbtDecoder(open val tag: AnyTag) : NamedValueDecoder() {
 
         val decoder = when (descriptor.kind) {
             StructureKind.CLASS -> NbtDecoder(currentTag)
-            StructureKind.LIST -> if (currentTag.isNbtList) ListNbtDecoder(currentNbtTag().nbtList)
+            StructureKind.LIST -> if (currentTag.isNbtList) ListTagDecoder(currentNbtTag().nbtList)
             else PrimitiveArrayTagDecoder(currentTag as ArrayTag<Any>)
 
             else -> this
@@ -56,7 +56,7 @@ internal open class NbtDecoder(open val tag: AnyTag) : NamedValueDecoder() {
 
 internal class PrimitiveArrayTagDecoder(override val tag: ArrayTag<Any>) : NbtDecoder(tag) {
     override var currentIndex = -1
-    private val lastIndex = tag.size - 1
+    private val lastIndex = tag.arraySize - 1
 
     override fun currentNbtTag(name: String) = tag
 
@@ -69,9 +69,11 @@ internal class PrimitiveArrayTagDecoder(override val tag: ArrayTag<Any>) : NbtDe
     override fun decodeTaggedShort(tag: String) = currentNbtTag(tag).intArray[currentIndex].toShort()
     override fun decodeTaggedBoolean(tag: String) = currentNbtTag(tag).byteArray[currentIndex] == 1.toByte()
     override fun decodeTaggedChar(tag: String) = currentNbtTag(tag).byteArray[currentIndex].toInt().toChar()
+    override fun decodeTaggedFloat(tag: String) = Float.fromBits(currentNbtTag(tag).intArray[currentIndex])
+    override fun decodeTaggedDouble(tag: String) = Double.fromBits(currentNbtTag(tag).longArray[currentIndex])
 }
 
-internal class ListNbtDecoder(override val tag: ListTag) : NbtDecoder(tag) {
+internal class ListTagDecoder(override val tag: ListTag) : NbtDecoder(tag) {
     override var currentIndex = -1
     private val lastIndex = tag.value.lastIndex
 

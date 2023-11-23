@@ -1,6 +1,6 @@
-package fyi.pauli.prolialize.extensions
+package fyi.pauli.nbterialize.extensions
 
-import fyi.pauli.prolialize.serialization.types.*
+import fyi.pauli.nbterialize.serialization.types.*
 
 /**
  * @author btwonion

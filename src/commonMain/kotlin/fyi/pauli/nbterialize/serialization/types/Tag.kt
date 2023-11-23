@@ -1,6 +1,6 @@
-package fyi.pauli.prolialize.serialization.types
+package fyi.pauli.nbterialize.serialization.types
 
-import fyi.pauli.prolialize.extensions.AnyTag
+import fyi.pauli.nbterialize.extensions.AnyTag
 import kotlinx.io.Buffer
 
 /**
@@ -10,7 +10,7 @@ import kotlinx.io.Buffer
  * @since 22/11/2023
  */
 public sealed class Tag<T : Any> {
-    public abstract val name: String?
+    public abstract var name: String?
     public abstract val type: TagType
     internal lateinit var value: T
     internal abstract val size: Int

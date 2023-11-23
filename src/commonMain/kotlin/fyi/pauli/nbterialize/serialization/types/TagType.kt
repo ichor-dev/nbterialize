@@ -1,4 +1,4 @@
-package fyi.pauli.prolialize.serialization.types
+package fyi.pauli.nbterialize.serialization.types
 
 /**
  * @author btwonion

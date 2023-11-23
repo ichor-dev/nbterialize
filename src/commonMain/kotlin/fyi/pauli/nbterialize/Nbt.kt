@@ -1,14 +1,13 @@
-package fyi.pauli.prolialize
+package fyi.pauli.nbterialize
 
-import fyi.pauli.prolialize.extensions.AnyTag
-import fyi.pauli.prolialize.serialization.types.Tag
-import fyi.pauli.prolialize.serialization.NbtDecoder
-import fyi.pauli.prolialize.serialization.NbtEncoder
-import fyi.pauli.prolialize.serialization.types.CompoundTag
-import fyi.pauli.prolialize.serialization.types.TagType
+import fyi.pauli.nbterialize.extensions.AnyTag
+import fyi.pauli.nbterialize.serialization.NbtDecoder
+import fyi.pauli.nbterialize.serialization.NbtEncoder
+import fyi.pauli.nbterialize.serialization.types.CompoundTag
+import fyi.pauli.nbterialize.serialization.types.Tag
+import fyi.pauli.nbterialize.serialization.types.TagType
 import kotlinx.io.Buffer
 import kotlinx.io.readByteArray
-import kotlinx.io.readString
 import kotlinx.serialization.BinaryFormat
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.InternalSerializationApi
@@ -45,11 +44,10 @@ public object Nbt : BinaryFormat {
 
     public fun decodeToNbt(value: ByteArray): AnyTag {
         val buffer = Buffer().also { it.write(value) }
-        val type = TagType.entries.first { it.id == buffer.readByte().toInt() }
-        val nameLength = buffer.readShort()
-        val name = buffer.readString(nameLength.toLong())
+        val id = buffer.readByte().toInt()
+        val type = TagType.entries.first { it.id == id }
 
-        return Tag.read(type, buffer, name)
+        return Tag.read(type, buffer, null)
     }
 
     /**

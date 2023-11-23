@@ -1,9 +1,9 @@
-package fyi.pauli.prolialize.serialization.types
+package fyi.pauli.nbterialize.serialization.types
 
 import kotlinx.io.Buffer
 
 public data object EndTag : Tag<Nothing>() {
-    override val name: String? = null
+    override var name: String? = null
     override val type: TagType = TagType.END
     override val size: Int = 0
 

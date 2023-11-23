@@ -1,7 +1,7 @@
-package fyi.pauli.prolialize.serialization
+package fyi.pauli.nbterialize.serialization
 
-import fyi.pauli.prolialize.extensions.AnyTag
-import fyi.pauli.prolialize.serialization.types.*
+import fyi.pauli.nbterialize.extensions.AnyTag
+import fyi.pauli.nbterialize.serialization.types.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -47,8 +47,8 @@ internal open class NbtEncoder(private val tagConsumer: (AnyTag) -> Unit) : Name
         return when (descriptor.kind) {
             StructureKind.CLASS -> NbtEncoder(consumer)
             StructureKind.LIST -> when {
-                serialName.endsWith("Array") -> PrimitiveArrayNbtEncoder(serialName.substringAfterLast('.'), consumer)
-                serialName.endsWith("List") -> ListNbtEncoder(consumer)
+                serialName.endsWith("Array") -> PrimitiveArrayTagEncoder(serialName.substringAfterLast('.'), consumer)
+                serialName.endsWith("List") -> ListTagEncoder(consumer)
                 else -> throw IllegalArgumentException("NBT encoding for $serialName not implemented")
             }
 
@@ -61,7 +61,7 @@ internal open class NbtEncoder(private val tagConsumer: (AnyTag) -> Unit) : Name
     }
 }
 
-internal class PrimitiveArrayNbtEncoder(private val serialName: String, tagConsumer: (AnyTag) -> Unit) :
+internal class PrimitiveArrayTagEncoder(private val serialName: String, tagConsumer: (AnyTag) -> Unit) :
     NbtEncoder(tagConsumer) {
     private val list = mutableListOf<Any>()
 
@@ -85,8 +85,8 @@ internal class PrimitiveArrayNbtEncoder(private val serialName: String, tagConsu
         "LongArray" -> LongArrayTag((list as List<Long>).toLongArray())
 
         "ShortArray" -> IntArrayTag((list as List<Short>).map { it.toInt() }.toIntArray())
-        "FloatArray" -> ListTag(TagType.FLOAT, (list as List<Float>).map(::FloatTag))
-        "DoubleArray" -> ListTag(TagType.DOUBLE, (list as List<Double>).map(::DoubleTag))
+        "FloatArray" -> IntArrayTag((list as List<Float>).map { it.toBits() }.toIntArray())
+        "DoubleArray" -> LongArrayTag((list as List<Double>).map { it.toBits() }.toLongArray())
 
         "BooleanArray" -> ByteArrayTag((list as List<Boolean>).map { (if (it) 1 else 0).toByte() }.toByteArray())
         "CharArray" -> ByteArrayTag((list as List<Char>).map { it.code.toByte() }.toByteArray())
@@ -94,7 +94,7 @@ internal class PrimitiveArrayNbtEncoder(private val serialName: String, tagConsu
     }
 }
 
-internal class ListNbtEncoder(tagConsumer: (AnyTag) -> Unit) : NbtEncoder(tagConsumer) {
+internal class ListTagEncoder(tagConsumer: (AnyTag) -> Unit) : NbtEncoder(tagConsumer) {
     private val list = mutableListOf<AnyTag>()
 
     override fun currentNbtTag() = ListTag(list.first().type, list)

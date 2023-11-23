@@ -1,4 +1,4 @@
-import fyi.pauli.prolialize.Nbt
+import fyi.pauli.nbterialize.Nbt
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
