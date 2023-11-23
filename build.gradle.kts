@@ -44,7 +44,7 @@ kotlin {
     linuxArm64()
     mingwX64()
     wasmWasi()
-    js {
+    js(IR) {
         browser()
         nodejs()
     }
@@ -124,7 +124,6 @@ githubRelease {
     repo(repo)
     tagName("v${project.version}")
     overwrite(true)
-    releaseAssets(components["kotlin"])
     targetCommitish("main")
 }
 
