@@ -58,11 +58,7 @@ public object Nbt : BinaryFormat {
      */
     override fun <T> encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray {
         val tag = encodeToNbt(serializer, value)
-        return if (tag is CompoundTag) {
-            val buffer = Buffer()
-            tag.writeRoot(buffer)
-            buffer.readByteArray()
-        } else byteArrayOf()
+        return encodeFromNbt(tag)
     }
 
 
@@ -71,5 +67,13 @@ public object Nbt : BinaryFormat {
         val encoder = NbtEncoder { tag = it }
         encoder.encodeSerializableValue(serializer, value)
         return tag
+    }
+
+    public fun encodeFromNbt(tag: AnyTag): ByteArray {
+        return if (tag is CompoundTag) {
+            val buffer = Buffer()
+            tag.writeRoot(buffer)
+            buffer.readByteArray()
+        } else byteArrayOf()
     }
 }
