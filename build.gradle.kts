@@ -19,7 +19,7 @@ plugins {
 }
 
 group = "fyi.pauli"
-version = "1.0.1"
+version = "1.0.2"
 description = "Kotlin.serialization library for the Minecraft Nbt format."
 val authors = listOf("btwonion", "kxmpxtxnt")
 val isSnapshot = false
