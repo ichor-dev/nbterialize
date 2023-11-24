@@ -18,7 +18,7 @@ plugins {
     signing
 }
 
-group = "fyi.pauli"
+group = "fyi.pauli.nbterialize"
 version = "1.0.2"
 description = "Kotlin.serialization library for the Minecraft Nbt format."
 val authors = listOf("btwonion", "kxmpxtxnt")
