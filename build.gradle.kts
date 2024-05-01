@@ -19,7 +19,7 @@ plugins {
 }
 
 group = "fyi.pauli.nbterialize"
-version = "1.0.2"
+version = "1.0.3"
 description = "Kotlin.serialization library for the Minecraft Nbt format."
 val authors = listOf("btwonion", "kxmpxtxnt")
 val isSnapshot = false
@@ -40,14 +40,14 @@ kotlin {
             kotlinOptions.jvmTarget = "1.8"
         }
     }
+
+    iosX64()
     linuxX64()
-    linuxArm64()
     mingwX64()
-    wasmWasi()
-    js(IR) {
-        browser()
-        nodejs()
-    }
+    iosArm64()
+    macosX64()
+    macosArm64()
+    linuxArm64()
 
     sourceSets {
         val commonMain by getting {
@@ -135,23 +135,13 @@ val dokkaJar: Jar = tasks.create<Jar>("dokkaJar") {
 
 publishing {
     repositories {
-        maven {
-            name = "ossrh"
-            credentials(PasswordCredentials::class)
-            setUrl(
-                if (!isSnapshot) "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2"
-                else "https://s01.oss.sonatype.org/content/repositories/snapshots"
-            )
-        }
+
 
         // Here for instant availability
         maven {
             name = "nyon"
             url = uri("https://repo.nyon.dev/releases")
             credentials(PasswordCredentials::class)
-            authentication {
-                create<BasicAuthentication>("basic")
-            }
         }
     }
 
@@ -179,6 +169,8 @@ publishing {
                         url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
                     }
                 }
+
+                url.set("https://github.com/$githubRepo")
 
                 scm {
                     connection.set("scm:git:git://github.com/${githubRepo}.git")
