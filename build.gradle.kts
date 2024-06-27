@@ -8,8 +8,8 @@ import org.jetbrains.dokka.DokkaConfiguration.Visibility
 import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
-	kotlin("multiplatform") version "1.9.23"
-	kotlin("plugin.serialization") version "1.9.23"
+	kotlin("multiplatform") version "2.0.0"
+	kotlin("plugin.serialization") version "2.0.0"
 
 	id("org.jetbrains.dokka") version "1.9.20"
 
@@ -52,8 +52,8 @@ kotlin {
 	sourceSets {
 		val commonMain by getting {
 			dependencies {
-				api("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.3")
-				api("org.jetbrains.kotlinx:kotlinx-io-core:0.3.3")
+				api("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.1")
+				api("org.jetbrains.kotlinx:kotlinx-io-core:0.4.0")
 			}
 		}
 
@@ -67,7 +67,7 @@ kotlin {
 		val jvmTest by getting {
 			dependencies {
 				implementation(kotlin("test-junit5"))
-				implementation("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+				implementation("org.junit.jupiter:junit-jupiter-engine:5.10.3")
 			}
 		}
 	}
